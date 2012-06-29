@@ -24,9 +24,9 @@ module GitCheckCI
 
     desc "status", "Print the current CI status"
     def status
-      # silencing($stdout) do
+      silencing($stdout) do
         Server.new.start
-      # end
+      end
       Formatter.handle_response(*Client.new.read)
     end
 
