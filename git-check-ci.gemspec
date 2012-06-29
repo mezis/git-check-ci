@@ -17,22 +17,17 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = ">= 1.3.6"
 
-  # s.add_development_dependency "bundler", ">= 1.0.0"
-  # s.add_development_dependency "rspec", "~> 2.4.0"
-  # s.add_development_dependency "rake"
+  s.add_development_dependency "bundler"
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "rake"
   s.add_development_dependency "pry"
   s.add_development_dependency "pry-nav"
-  # s.add_development_dependency "http_logger"
-  # s.add_development_dependency "webmock"
-  # s.add_development_dependency "guard-rspec"
-  # s.add_development_dependency "ruby_gntp"
+  s.add_development_dependency "pry-doc"
 
-  # s.add_dependency "rails", "~> 2.3.12"
   s.add_dependency "httparty"
-  # s.add_dependency "json"
-  # s.add_dependency "configatron"
-  # s.add_dependency "whatlanguage"
-  # s.add_dependency "nokogiri"
+  s.add_dependency "daemons"
+  s.add_dependency "json"
+  s.add_dependency "thor"
 
   s.files         = `git ls-files`.split($\)
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

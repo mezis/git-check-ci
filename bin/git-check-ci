@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+#
+# Check the status of the CI server, and print a block coloured accordingly.
+# Add me to your prompt!
+# 
+# Usage:
+# 
+# Configure your CI info in Git
+# 
+# $ git config --global ci.url <url>
+# $ git config ci.project <project>
+# 
+# The tool will call curl(1), so make sure it's in your PATH and 
+# configure ~/.netrc as necessary.
+#
+require 'rubygems'
+require 'git-check-ci/shell'
+
+GitCheckCI::Shell.start
+Kernel.exit(0)
