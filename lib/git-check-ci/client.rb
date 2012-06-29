@@ -11,7 +11,7 @@ module GitCheckCI
 
 
     def read
-      return [400,""] unless @server.running?
+      return [400,""] unless @server.outfile.exist?
 
       io = File.open(@server.outfile, 'r')
       begin
