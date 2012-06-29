@@ -1,10 +1,14 @@
 require 'git-check-ci/checker'
+require 'git-check-ci/silencer'
 require 'pathname'
+
+require 'rubygems'
 require 'daemons'
 require 'json'
 
 module GitCheckCI
   class Server
+    include Silencer
 
     # path where the results are stored
     attr_reader :outfile
@@ -13,7 +17,6 @@ module GitCheckCI
       @dir      = options[:dir] || Dir.pwd
       @interval = options[:interval] || 60.0
       @checker  = Checker.new(:dir => @dir)
-      @outfile  = tmpdir.join("#{app_name}.out")
 
       @appgroup = Daemons::ApplicationGroup.new(
         app_name,
@@ -23,18 +26,23 @@ module GitCheckCI
     end
 
 
-    def start
+    def start(options = {})
       return if @app.running?
       work # once manually so we're pretty sure the server loop will work
       @app.start
       sleep 0.1 until @app.pid.pid
-      @app.started
+      @app.started unless options[:quiet]
       nil
     end
 
 
-    def stop
-      @app.stop if @app.running?
+    def stop(options = {})
+      return unless @app.running?
+      if options[:quiet]
+        silencing($stdout) { @app.stop }
+      else
+        @app.stop
+      end
       nil
     end
    
@@ -48,7 +56,7 @@ module GitCheckCI
 
 
     def app_name
-      "ci-check-#{@checker.uid}"
+      "git-check-ci:#{@checker.uid}"
     end
 
 
@@ -61,16 +69,7 @@ module GitCheckCI
     end
 
     def work
-      io = File.open(@outfile,'w')
-      begin
-        io.flock File::LOCK_EX
-        io.write @checker.check.to_json
-        io.flush
-        nil
-      ensure
-        io.flock File::LOCK_UN
-        io.close
-      end
+      @checker.check_and_save
     end
 
 
