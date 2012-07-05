@@ -5,11 +5,6 @@ module GitCheckCI
     extend self
 
     def handle_response(data)
-      # binding.pry
-      # !is_git_dir?             and draw(:gray, "?") and return
-      # Config.ci.url.empty?     and draw(:gray, "?") and return
-      # Config.ci.project.empty? and draw(:gray, "?") and return
-
       case data[:body]
         when /failed/         then build_string(:red,    '✗')
         when /pending/        then build_string(:gray,   '-')
@@ -25,10 +20,11 @@ module GitCheckCI
     def build_string(color, symbol)
       reset  = "\033[0m"
       color_code = case color
-        when :red    then "\033[7;31m"
-        when :green  then "\033[7;32m"
-        when :yellow then "\033[7;33m"
-        when :gray   then "\033[7;37m"
+        when :red    then "\033[31m"
+        when :green  then "\033[32m"
+        when :yellow then "\033[33m"
+        when :gray   then "\033[37m"
+        else ""
       end
 
       "#{color_code}#{symbol}#{reset}"
