@@ -1,3 +1,3 @@
 module GitCheckCI
-  VERSION = '0.1.0' unless defined?(GitCheckCI::VERSION)
+  VERSION = '0.1.1' unless defined?(GitCheckCI::VERSION)
 end

@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "ruby-prof"
 
   s.add_dependency "httparty"
-  s.add_dependency "daemons"
+  s.add_dependency "daemons", '~> 1.1'
   s.add_dependency "json"
   s.add_dependency "thor"
 
