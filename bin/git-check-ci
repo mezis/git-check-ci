@@ -3,25 +3,5 @@
 # Check the status of the CI server, and print a block coloured accordingly.
 # Add me to your prompt!
 #
-require 'pathname'
-
-# We need to achieve less than 100ms response time here, so requiring Rubygems
-# is not an option. Do some shell magic to check the status as quickly 
-# as possible.
-if ARGV == ['fast-check']
-  printf %x(git config ci.status 2>/dev/null || echo '?').strip
-  # fork, daemonize, spawn server if necessary
-  if pid = fork
-    Process.detach(pid)
-  else
-    require 'rubygems'
-    require 'git-check-ci/server'
-    GitCheckCI::Server.new.start(:quiet => true)
-  end
-  exit 0
-end
-
-# Outside of "fast mode", start the full-fledged tool
-require 'rubygems'
 require 'git-check-ci/shell'
 GitCheckCI::Shell.start

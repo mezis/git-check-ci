@@ -6,9 +6,9 @@ module GitCheckCI
 
     def handle_response(data)
       case data[:body]
-        when /failed/         then build_string(:red,    '✗')
-        when /pending/        then build_string(:gray,   '-')
-        when /[0-9a-f]{40}/   then build_string(:green,  '✔')
+        when /failed/              then build_string(:red,    '✗')
+        when /(pending|building)/  then build_string(:gray,   '●')
+        when /[0-9a-f]{40}/        then build_string(:green,  '✔')
         else build_string(:yellow, '!')
       end
     end

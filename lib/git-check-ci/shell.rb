@@ -9,11 +9,6 @@ module GitCheckCI
   class Shell < Thor
     include Thor::Actions
 
-    desc "fast-check", "Return a character for the current CI status. Usable in your prompt."
-    def foo
-      raise "This should never be reached."
-    end
-
     desc "check", "Fetch and print the current CI status."
     def check
       Checker.new.check_and_save
@@ -41,19 +36,20 @@ module GitCheckCI
       else
         say "All good! Now the 'check' and 'fast-check' commands should work.", :green
       end
+      @config.ci.last_checked = nil
     end
 
 
-    namespace :server
-
-    desc "server_start", "Start the checking daemon."
+    desc "server_start", "Start the checking daemon. Will store the build status in your git config."
+    method_option :quiet, :type => :boolean, :aliases => "-q"
     def server_start
-      Server.new.start
+      Server.new.start options
     end
 
     desc "server_stop", "Stop the checking daemon."
+    method_option :quiet, :type => :boolean, :aliases => "-q"
     def server_stop
-      Server.new.stop
+      Server.new.stop options
     end
 
     desc "server_status", "Displays the server status."
@@ -63,6 +59,29 @@ module GitCheckCI
       else
         say "Server is not running"
       end
+    end
+
+
+    desc "init", "Output shell config."
+    def init
+      puts %q[
+        GitCheckCI() {
+          # exit early if not in a git repository
+          git status > /dev/null 2>&1 || return
+
+          # exit early if no project is configured
+          git config ci.project > /dev/null 2>&1 || { echo '?' ; return ; }
+
+          # spawn a server if no recent updates
+          last_checked=$(git config ci.last-checked || echo 0)
+          now=$(date +%s)
+          let "delta = $now - $last_checked"
+          test $delta -gt 120 && { git check-ci server_start & }
+
+          # try to return a status
+          git config ci.status 2> /dev/null || echo '?'
+        }
+      ]
     end
 
 

@@ -51,7 +51,7 @@ module GitCheckCI
 
     # save the CI result to the Git config
     def save(code_and_response)
-      @config.ci.last_checked = Time.now.strftime('%F %T')
+      @config.ci.last_checked = Time.now.strftime('%s')
       @config.ci.response     = code_and_response.to_json
       @config.ci.status       = Formatter.handle_response(code_and_response)
       nil

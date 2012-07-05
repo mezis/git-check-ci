@@ -1,18 +1,17 @@
 ## git-check-ci
 
 Display your continuous integration status in your prompt!
+This tool helps you decorate your command line with `✗` for failed builds and `✔` for successful builds.
 
-This tool will show a `✗` for failed builds, a `✔` for successful builds,
-a `-` when the latest build is pending, and a `?` on errors.
+It assumes you're running a CI server that responds to a `/:project/ping` endpoint with status 200 on build successes.
 
 ### Installing
 
-    gem install --no-wrappers git-check-ci
+As simple as it gets:
 
-The `no-wrappers` option is very important. Without it, checks will jump from 50ms to 400ms---unacceptable for something that lives in your prompt.
-This is because `require 'rubygems'` is awfully slow, even if you're usgin [Slimgems](http://slimgems.github.com/) instead of the stock [Rubygems](http://rubygems.org/).
+    gem install git-check-ci
 
-    
+
 ### Configuring
 
 Go to a Git clone of the project you've placed under CI:
@@ -39,15 +38,46 @@ Run the setup command:
 
 Add it to your prompt:
     
-    $ vi ~/.profile
-    
-    export PS1="\$(git-check-ci fast-check) \u\$"
+    --- add me to e.g. ~/.profile ---
+    eval "$(git check-ci init)"
+    export PS1="\$(GitCheckCI) \u\$"
 
 Reload your shell:
 
     $ exec $SHELL -l
 
-You're done! You should see:
+You're done! You should see the following while it's starting up:
+
+    ? mezis$
+
+And after hitting return a few times, assuming your build is broken:
 
     ✗ mezis$
+
+It's red... Time to make it green and refactor!
+Happy coding!
+
+
+### Status icons
+
+This tool will show:
+
+- nothing when not in a Git repository.
+- `✗` for failed builds.
+- `✔` for successful builds.
+- `●` when the latest build is pending or in progress.
+- `?` if the configuration is incomplete, or the check service is starting up.
+- `!` on failures (properly configured but checking failed).
+
+
+### Behind the scenes
+
+The `GitCheckCI` shell helper does two things:
+
+- it spawns a checking service with `git check-ci server_start`
+- it returns the contents of the `ci.status` Git configuration variable
+
+The spawned server check the CI status over HTTP every minute and stores the response in the Git configuration (used as an IPC of sorts).
+
+It's done that way because `GitCheckCI` needs to be really, really fast---anything slower than 30ms will make your prompt feel unresponsive.
 

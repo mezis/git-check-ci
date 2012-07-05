@@ -33,7 +33,10 @@ module GitCheckCI
       work # once manually so we're pretty sure the server loop will work
       @app.start
       sleep 0.1 until @app.pid.pid
-      @app.started unless options[:quiet]
+      unless options[:quiet]
+        @app.started
+        puts "project #{@config.ci.project}"
+      end
       nil
     end
 
