@@ -32,6 +32,7 @@ module GitCheckCI
         ask_for @config.ci.password, "with which passphrase?"
       end
 
+      puts
       say "Setup is now complete. Doing a test run."
       @config.ci.status = nil
       Checker.new.check_and_save
@@ -72,18 +73,9 @@ module GitCheckCI
     def ask_for(setting, message)
       current_value = setting.get
       current_value = 'currently unset' if current_value.empty?
-      value = ask("#{message} [#{current_value}]", :cyan)
+      puts
+      value = ask("#{message} [#{current_value}]\n> ", :cyan)
       setting.set(value) unless value.empty?
-    end
-
-
-    def silencing(stream)
-      old_stream = stream.dup
-      stream.reopen('/dev/null')
-      stream.sync = true
-      yield
-    ensure
-      stream.reopen(old_stream)
     end
 
   end

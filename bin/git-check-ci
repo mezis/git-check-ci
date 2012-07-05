@@ -2,39 +2,26 @@
 #
 # Check the status of the CI server, and print a block coloured accordingly.
 # Add me to your prompt!
-# 
-# Usage:
-# 
-# Configure your CI info in Git
-# 
-# $ git config --global ci.url <url>
-# $ git config ci.project <project>
-# 
-# The tool will call curl(1), so make sure it's in your PATH and 
-# configure ~/.netrc as necessary.
 #
 require 'pathname'
 
-libdir = Pathname.new(__FILE__).join('../../lib').realpath
-$:.unshift(libdir) unless $:.include?(libdir)
-
-
 # We need to achieve less than 100ms response time here, so requiring Rubygems
-# is not an option. Do some manual magic.
+# is not an option. Do some shell magic to check the status as quickly 
+# as possible.
 if ARGV == ['fast-check']
-  require 'git-check-ci/config'
-
-  printf GitCheckCI::Config.ci.status(:default => '?').to_s
+  printf %x(git config ci.status 2>/dev/null || echo '?').strip
   # fork, daemonize, spawn server if necessary
   if pid = fork
     Process.detach(pid)
   else
+    require 'rubygems'
     require 'git-check-ci/server'
     GitCheckCI::Server.new.start(:quiet => true)
   end
   exit 0
 end
 
-# Otherwise start the full-fledged tool
+# Outside of "fast mode", start the full-fledged tool
+require 'rubygems'
 require 'git-check-ci/shell'
 GitCheckCI::Shell.start

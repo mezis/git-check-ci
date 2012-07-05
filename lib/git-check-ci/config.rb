@@ -9,6 +9,7 @@ module GitCheckCI
   class Config
     Error = Class.new(RuntimeError)
 
+    
     # configs are directory (well, repo) specific
     def initialize(options = {})
       @directory = options.delete(:dir) || Dir.pwd
@@ -47,17 +48,18 @@ module GitCheckCI
     end
 
 
-    def self.method_missing(method_name, *args)
-      new :chain => [method_name]
-    end
-
-
-    def self.is_git_dir?
+    def is_git_dir?
       in_dir do
         %x(git status 2>/dev/null)
         ($? == 0)
       end
     end
+
+
+    def self.method_missing(method_name, *args)
+      new :chain => [method_name]
+    end
+
 
     def self.valid?
       new.valid?

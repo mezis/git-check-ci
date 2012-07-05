@@ -9,6 +9,8 @@ require 'httparty'
 module GitCheckCI
   class Checker
 
+    attr_reader :config
+
     # pass a :dir (defaults to current directory)
     def initialize(options = {})
       @directory = options[:dir] || Dir.pwd
