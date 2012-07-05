@@ -22,8 +22,8 @@ module GitCheckCI
 
     desc "setup", "Interactively setup #{File.basename $0}."
     def setup
+      Server.new.stop
       @config = Config.new
-
 
       ask_for @config.ci.url,      "What is the URL of your CI server?"
       ask_for @config.ci.project,  "What is the name of the project you're checking?"
