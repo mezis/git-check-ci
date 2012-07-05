@@ -17,6 +17,7 @@ module GitCheckCI
       @dir      = options[:dir] || Dir.pwd
       @interval = options[:interval] || 60.0
       @checker  = Checker.new(:dir => @dir)
+      @config   = @checker.config
 
       @appgroup = Daemons::ApplicationGroup.new(
         app_name,
@@ -27,6 +28,7 @@ module GitCheckCI
 
 
     def start(options = {})
+      return unless @config.is_git_dir?
       return if @app.running?
       work # once manually so we're pretty sure the server loop will work
       @app.start
@@ -37,6 +39,7 @@ module GitCheckCI
 
 
     def stop(options = {})
+      return unless @config.is_git_dir?
       return unless @app.running?
       if options[:quiet]
         silencing($stdout) { @app.stop }
