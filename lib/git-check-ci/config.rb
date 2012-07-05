@@ -71,10 +71,11 @@ module GitCheckCI
       in_dir do
         if value.nil?
           %x(git config --unset #{key} || true)
+          success =  ($? == 0)
         else
-          %x(git config #{key} "#{value}")
+          success = system("git", "config", key, value)
         end
-        raise Error.new("writing config failed (#{key} -> #{value})") unless ($? == 0)
+        raise Error.new("writing config failed (#{key} -> #{value})") unless success
       end
     end
 
