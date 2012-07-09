@@ -6,10 +6,10 @@ module GitCheckCI
 
     def handle_response(data)
       case data[:body]
-        when /failed/              then build_string(:red,    '✗')
-        when /(pending|building)/  then build_string(:gray,   '●')
-        when /[0-9a-f]{40}/        then build_string(:green,  '✔')
-        else build_string(:yellow, '!')
+        when /failed/              then [ color_code(:red),    '✗' ]
+        when /(pending|building)/  then [ color_code(:gray),   '•' ]
+        when /[0-9a-f]{40}/        then [ color_code(:green),  '✔' ]
+        else [ color_code(:yellow), '!' ]
       end
     end
 
@@ -17,7 +17,7 @@ module GitCheckCI
     private
 
 
-    def build_string(color, symbol)
+    def color_code(color)
       reset  = "\033[0m"
       color_code = case color
         when :red    then "\033[31m"
@@ -26,8 +26,6 @@ module GitCheckCI
         when :gray   then "\033[37m"
         else ""
       end
-
-      "#{color_code}#{symbol}#{reset}"
     end
 
 

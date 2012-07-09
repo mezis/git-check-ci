@@ -65,7 +65,10 @@ module GitCheckCI
     desc "init", "Output shell config."
     def init
       puts %q[
-        GitCheckCI() {
+        _git_ci_color() {
+          git config ci.color 2>&1 || true
+        }
+        _git_ci_status() {
           # exit early if not in a git repository
           git status > /dev/null 2>&1 || return
 
@@ -80,6 +83,10 @@ module GitCheckCI
 
           # try to return a status
           git config ci.status 2> /dev/null || echo '?'
+        }
+        GitCheckCI() {
+          echo "*** GitCheckCI is deprecated, use _git_ci_status"
+          _git_ci_status
         }
       ]
     end
