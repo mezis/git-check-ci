@@ -36,11 +36,11 @@ Run the setup command:
     Setup is now complete. Doing a test run.
     All good! Now the 'check' and 'fast-check' commands should work.
 
-Add it to your prompt:
+Add it to your prompt (simplistic example):
     
     --- add me to e.g. ~/.profile ---
     eval "$(git check-ci init)"
-    export PS1="\$(GitCheckCI) \u\$"
+    export PS1="\[\$(_git_ci_color)\]\$(_git_ci_status) \u@\h\$"
 
 Reload your shell:
 
@@ -79,5 +79,5 @@ The `GitCheckCI` shell helper does two things:
 
 The spawned server check the CI status over HTTP every minute and stores the response in the Git configuration (used as an IPC of sorts).
 
-It's done that way because `GitCheckCI` needs to be really, really fast---anything slower than 30ms will make your prompt feel unresponsive.
+It's done that way because the `_git_ci_*` shell functions need to be really, really fast---anything slower than 30ms will make your prompt feel unresponsive.
 
