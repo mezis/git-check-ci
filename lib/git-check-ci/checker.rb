@@ -43,7 +43,7 @@ module GitCheckCI
       response = HTTParty.get(url, options)
       return {:code => response.code, :body => response.to_s}
 
-    rescue HTTParty::UnsupportedURIScheme, SocketError
+    rescue HTTParty::UnsupportedURIScheme, SocketError, Errno::ECONNREFUSED
       {:code => 400}
     end
 
