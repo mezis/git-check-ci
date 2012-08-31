@@ -10,8 +10,8 @@ module GitCheckCI
     include Thor::Actions
 
     desc "check", "Fetch and print the current CI status."
-    def check
-      Checker.new.check_and_save
+    def check(hash = nil)
+      Checker.new.check_and_save(hash)
       $stdout.puts Config.ci.response.to_s
     end
 
