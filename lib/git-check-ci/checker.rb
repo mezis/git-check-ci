@@ -18,8 +18,8 @@ module GitCheckCI
     end
 
 
-    def check_and_save
-      save(check)
+    def check_and_save(hash = nil)
+      save(check(hash))
     end
 
     def uid
@@ -30,7 +30,7 @@ module GitCheckCI
     private
 
 
-    def check
+    def check( hash = nil )
       return {:code => 400} if @config.ci.url.empty? || @config.ci.project.empty?
 
       login    = @config.ci.login
@@ -39,7 +39,11 @@ module GitCheckCI
       unless login.empty? && password.empty?
         options[:basic_auth] = { :username => login.to_s, :password => password.to_s }
       end
-      url = "#{@config.ci.url}/#{@config.ci.project}/ping"
+      unless hash
+        url = "#{@config.ci.url}/#{@config.ci.project}/ping"
+      else
+        url = "#{@config.ci.url}/#{@config.ci.project}/build_by_hash/#{hash}/ping"
+      end
       response = HTTParty.get(url, options)
       return {:code => response.code, :body => response.to_s}
 
